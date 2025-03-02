@@ -1,0 +1,80 @@
+Step 1: Confirm the Correct Contract Address
+Aerodrome Slipstream’s Position Manager on Base should be a single contract managing all NFT positions, similar to Uniswap V3’s NonfungiblePositionManager. Based on your addresses:
+0x827922686190790b37229fd06084350E74485b72 seems to be the one holding position data, as it’s linked to token ID 7753534.
+
+0x82792F8F57635DC7e4C78FeB5a7a2CFD102A1cC3 is labeled "Aerodrome Positions" but might not be the Position Manager.
+Action:
+Check 0x827922686190790b37229fd06084350E74485b72 on BaseScan. Look at its contract name (e.g., NonfungiblePositionManager or similar) and verify it has a positions function.
+
+Compare with Aerodrome’s official docs or GitHub (e.g., Aerodrome Finance GitHub) to ensure this is the Slipstream Position Manager. If not, 0x82792F8F57635DC7e4C78FeB5a7a2CFD102A1cC3 might be the correct one.
+For now, let’s assume 0x827922686190790b37229fd06084350E74485b72 is correct since it’s yielding NFT data.
+Step 2: Test the ABI and Call
+Here’s a debug script to isolate the issue:
+javascript
+const { ethers } = require("ethers");
+const provider = new ethers.providers.JsonRpcProvider("https://mainnet.base.org");
+
+const positionManagerAddress = "0x827922686190790b37229fd06084350E74485b72";
+const positionABI = [
+  "function positions(uint256 tokenId) view returns (uint96 nonce, address operator, address token0, address token1, uint24 fee, int24 tickLower, int24 tickUpper, uint128 liquidity, uint256 feeGrowthInside0LastX128, uint256 feeGrowthInside1LastX128, uint128 tokensOwed0, uint128 tokensOwed1)"
+];
+
+const positionContract = new ethers.Contract(positionManagerAddress, positionABI, provider);
+
+async function debugPosition(tokenId) {
+  try {
+    // Raw call to inspect the response
+    const rawData = await provider.call({
+      to: positionManagerAddress,
+      data: positionContract.interface.encodeFunctionData("positions", [tokenId])
+    });
+    console.log("Raw Data:", rawData);
+
+    // Attempt to decode
+    const decoded = positionContract.interface.decodeFunctionResult("positions", rawData);
+    console.log("Decoded Position:", decoded);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+const tokenId = 7753534;
+debugPosition(tokenId);
+
+What to Look For:
+Raw Data: If it’s 0x or very short, the contract might be reverting (e.g., token ID doesn’t exist).
+
+Error Details: If decoding fails, the error might specify “invalid return data” or “type mismatch,” indicating an ABI issue.
+
+Success: If it decodes, you’ll see an array with 12 values (nonce, operator, etc.).
+Step 3: Fix Common Issues
+Based on the debug output, here’s how to resolve:
+If Raw Data is 0x or Empty:
+The tokenId 7753534 might belong to a different contract (e.g., 0x82792F8F57635DC7e4C78FeB5a7a2CFD102A1cC3).
+
+Verify ownership with ownerOf(tokenId) (add to ABI: "function ownerOf(uint256 tokenId) view returns (address)") and ensure it matches your wallet.
+
+Test both addresses with the same tokenId.
+If Raw Data is Long but Decoding Fails:
+The ABI might be wrong. Aerodrome could have modified the positions return values. Check the contract’s source code on BaseScan (if verified) or use a minimal ABI to inspect:
+javascript
+const minimalABI = ["function positions(uint256 tokenId) view returns (tuple)"];
+
+Then log the raw tuple and adjust the ABI accordingly.
+If It Works:
+You’ve got the position data! Map it to readable values:
+javascript
+const [nonce, operator, token0, token1, fee, tickLower, tickUpper, liquidity, feeGrowth0, feeGrowth1, tokensOwed0, tokensOwed1] = decoded;
+console.log({
+  token0,
+  token1,
+  priceRange: { tickLower, tickUpper },
+  liquidity: ethers.utils.formatUnits(liquidity, 18),
+  feesOwed: {
+    token0: ethers.utils.formatUnits(tokensOwed0, 6), // Adjust decimals for USDC
+    token1: ethers.utils.formatUnits(tokensOwed1, 18) // Adjust for ETH
+  }
+});
+Step 4: Validate Token ID Source
+You mentioned the token represents a USDC/ETH position with a price range (2257.5–3047.3). This likely came from NFT metadata or a separate call. Ensure 7753534 was minted by the Slipstream Position Manager you’re querying. If it’s from a legacy Uniswap V3 position (0x03A520B32C04Bf3BE5F46762fce6Cd5031F498c2), you’d need to query that contract instead.
+

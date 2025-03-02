@@ -1,0 +1,43 @@
+Step 3: Fetch Liquidity Pool Positions
+To fetch a user’s current positions, you’ll need to interact with Aerodrome’s smart contracts. Here’s how:
+1. Get the User’s Wallet Address
+After connecting the wallet, retrieve the user’s address (e.g., 0x123...).
+2. Identify Relevant Contracts
+Aerodrome’s contracts are forked from Velodrome V2 with additions like Slipstream. Key contracts include:
+Pool Factory: Deployed at 0x420DD381b31aEf6683db6B902084cB0FFECe40Da (creates liquidity pools).
+
+Gauges: Contracts that distribute AERO emissions to staked LP tokens (e.g., Gauge addresses linked to each pool).
+
+Voter: Manages veAERO voting and emissions (0x16613524e02ad7e0cd9B7f621b410b81A47c9Ab4).
+
+LP Tokens/NFTs: Each pool issues LP tokens (vAMM) or NFTs (Slipstream) to represent positions.
+You can find these addresses on Aerodrome’s official documentation (aerodrome.finance) or Base explorer (basescan.org).
+3. Query LP Token Balances (vAMM Pools)
+For traditional pools:
+Get Pool Addresses: Call the allPools function on the Pool Factory to list all pools or filter for active ones via Gauge data.
+
+Check LP Token Balance: For each pool, use the LP token contract’s balanceOf(userAddress) function to see if the user has a position.
+
+Fetch Position Details: Use the pool contract’s getReserves to retrieve token amounts and calculate the user’s share (proportional to their LP tokens vs. total supply). For staked positions, query the Gauge contract’s balanceOf(userAddress).
+Example (ethers.js):
+javascript
+const { ethers } = require("ethers");
+const provider = new ethers.providers.JsonRpcProvider("https://mainnet.base.org");
+
+const poolAddress = "0x..."; // Example pool address
+const lpTokenABI = ["function balanceOf(address) view returns (uint256)"];
+const poolContract = new ethers.Contract(poolAddress, lpTokenABI, provider);
+
+async function getLPBalance(userAddress) {
+  const balance = await poolContract.balanceOf(userAddress);
+  console.log(`LP Token Balance: ${ethers.utils.formatEther(balance)}`);
+}
+
+4. Query Slipstream Positions (NFTs)
+For concentrated liquidity:
+Position Manager: Aerodrome’s Slipstream uses a contract similar to Uniswap V3’s NonfungiblePositionManager. Check the exact address on Base explorer or Aerodrome’s GitHub.
+
+Fetch NFTs: Call balanceOf(userAddress) to get the number of NFTs, then tokenOfOwnerByIndex(userAddress, index) to retrieve each token ID.
+
+Get Position Data: Use positions(tokenId) to fetch details like token pairs, price range, liquidity amount, and uncollected fees.
+

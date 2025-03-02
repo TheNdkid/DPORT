@@ -1,0 +1,52 @@
+Invalid address format: 0xb2cc224c1c9FEe385f8ad6a55b4d94E92359DC59 
+TypeError {code: "INVALID_ARGUMENT", argument: "address", value: "0xb2cc224c1c9FEe385f8ad6a55b4d94E92359DC59", shortMessage: "bad address checksum"}
+argument: "address"
+code: "INVALID_ARGUMENT"
+shortMessage: "bad address checksum"
+value: "0xb2cc224c1c9FEe385f8ad6a55b4d94E92359DC59"
+message: "bad address checksum (argument="address", value="0xb2cc224c1c9FEe385f8ad6a55b4d94E92359DC59", code=INVALID_ARGUMENT, version=6.13.5)"
+stack: "TypeError: bad address checksum (argument="address", value="0xb2cc224c1c9FEe385f8ad6a55b4d94E92359DC59", code=INVALID_ARGUMENT, version=6.13.5)↵ at makeError (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/ethers.js?v=88dadcc4:318:15)↵ at assert (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/ethers.js?v=88dadcc4:338:11)↵ at assertArgument (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/ethers.js?v=88dadcc4:342:3)↵ at Object.getAddress (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/ethers.js?v=88dadcc4:6834:5)↵ at normalizeAddress (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/src/services/aerodrome.ts:8:19)↵ at fetchAerodromePositions (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/src/services/aerodrome.ts:118:29)↵ at async Promise.allSettled (index 1)↵ at async fetchAllPositions (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/src/services/dex.ts:196:102)↵ at async queryFn (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/src/hooks/use-ethereum.ts:216:28)"
+get stack: ƒ ()
+length: 0
+name: ""
+[[Prototype]]: ƒ ()
+set stack: ƒ ()
+length: 1
+name: ""
+[[Prototype]]: ƒ ()
+apply: ƒ apply()
+arguments: "'caller', 'callee', and 'arguments' properties may not be accessed on strict mode functions or the arguments objects for calls to them"
+get arguments: ƒ ()
+set arguments: ƒ ()
+bind: ƒ bind()
+call: ƒ call()
+caller: "'caller', 'callee', and 'arguments' properties may not be accessed on strict mode functions or the arguments objects for calls to them"
+get caller: ƒ ()
+set caller: ƒ ()
+constructor: ƒ Function()
+length: 1
+name: ""
+toString: ƒ toString()
+Symbol(Symbol.hasInstance): undefined
+[[Prototype]]: Object
+constructor: ƒ Function()
+hasOwnProperty: ƒ hasOwnProperty()
+isPrototypeOf: ƒ isPrototypeOf()
+propertyIsEnumerable: ƒ propertyIsEnumerable()
+toLocaleString: ƒ toLocaleString()
+toString: ƒ toString()
+valueOf: ƒ valueOf()
+__defineGetter__: ƒ __defineGetter__()
+__defineSetter__: ƒ __defineSetter__()
+__lookupGetter__: ƒ __lookupGetter__()
+__lookupSetter__: ƒ __lookupSetter__()
+__proto__: ƒ ()
+get __proto__: ƒ get __proto__()
+set __proto__: ƒ set __proto__()
+[[Prototype]]: Object
+constructor: ƒ TypeError()
+message: "bad address checksum (argument="address", value="0xb2cc224c1c9FEe385f8ad6a55b4d94E92359DC59", code=INVALID_ARGUMENT, version=6.13.5)"
+name: "TypeError"
+[[Prototype]]: Object
+
+Invalid contract addresses

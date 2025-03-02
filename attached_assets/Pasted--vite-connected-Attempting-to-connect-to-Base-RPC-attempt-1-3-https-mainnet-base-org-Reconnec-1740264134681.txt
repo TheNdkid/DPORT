@@ -1,0 +1,49 @@
+[vite] connected.
+Attempting to connect to Base RPC (attempt 1/3): https://mainnet.base.org
+Reconnecting to stored address: 0xc8dB88117AA94F1c4a80824C58C02023489f1A92
+Successfully connected to Base RPC: 
+Object {url: "https://mainnet.base.org", network: "base", chainId: "8453", blockNumber: "26737379"}
+Connected to network: 8453
+Fetching token balances for address: 0xc8dB88117AA94F1c4a80824C58C02023489f1A92
+Starting to fetch DeFi positions... 
+Object {address: "0xc8dB88117AA94F1c4a80824C58C02023489f1A92", chainId: 8453, baseProvider: true, providerNetwork: _Network}
+Normalizing address: 0xc8dB88117AA94F1c4a80824C58C02023489f1A92
+Successfully normalized address: 0xc8dB88117AA94F1c4a80824C58C02023489f1A92
+Starting to fetch all positions for address: 0xc8dB88117AA94F1c4a80824C58C02023489f1A92
+Provider connection verified: 
+Object {network: "base", chainId: BigInt, blockNumber: 26737381}
+Fetching positions for protocols...
+Starting Uniswap V3 position fetch for: 0xc8dB88117AA94F1c4a80824C58C02023489f1A92
+Normalizing address: 0xc8dB88117AA94F1c4a80824C58C02023489f1A92
+Successfully normalized address: 0xc8dB88117AA94F1c4a80824C58C02023489f1A92
+Querying Uniswap V3 subgraph for positions...
+Attempting to fetch Aerodrome positions for address: 0xc8dB88117AA94F1c4a80824C58C02023489f1A92
+Error in fetchSlipstreamPositions: 
+ReferenceError {}
+
+Starting Uniswap V4 position fetch for: 0xc8dB88117AA94F1c4a80824C58C02023489f1A92
+Checking pool: 0x4C36d2919e407f0Cc2Ee3c993ccF8ac26d9CE64e
+Using V4 singleton address: 0x7CaD26499621783a986aebbf15d92e5c9CC04AA4
+Normalizing addresses...
+Error fetching Uniswap V4 position: 
+ReferenceError {}
+
+Error context: 
+Object {provider: true, walletAddress: "0xc8dB88117AA94F1c4a80824C58C02023489f1A92", poolAddress: "0x4C36d2919e407f0Cc2Ee3c993ccF8ac26d9CE64e", singleton: "0x7CaD26499621783a986aebbf15d92e5c9CC04AA4"}
+
+Starting Uniswap V4 position fetch for: 0xc8dB88117AA94F1c4a80824C58C02023489f1A92
+Checking pool: 0x6ce6D6D5b41624159165936924B880EeF608bCa2
+Using V4 singleton address: 0x7CaD26499621783a986aebbf15d92e5c9CC04AA4
+Normalizing addresses...
+Error fetching Uniswap V4 position: 
+ReferenceError {}
+
+Error context: 
+Object {provider: true, walletAddress: "0xc8dB88117AA94F1c4a80824C58C02023489f1A92", poolAddress: "0x6ce6D6D5b41624159165936924B880EeF608bCa2", singleton: "0x7CaD26499621783a986aebbf15d92e5c9CC04AA4"}
+
+Current network: 
+Object {chainId: BigInt, name: "base"}
+Invalid address format: 0xb2cc224c1c9FEe385f8ad6a55b4d94E92359DC59 
+TypeError {code: "INVALID_ARGUMENT", argument: "address", value: "0xb2cc224c1c9FEe385f8ad6a55b4d94E92359DC59", shortMessage: "bad address checksum"}
+
+Invalid contract addresses

@@ -1,0 +1,19 @@
+Failed to fetch pool IDs: 
+Error {code: "BAD_DATA", value: "0x", info: {…}, shortMessage: "could not decode result data"}
+code: "BAD_DATA"
+info: Object
+shortMessage: "could not decode result data"
+value: "0x"
+message: "could not decode result data (value="0x", info={ "method": "getPoolIds", "signature": "getPoolIds()" }, code=BAD_DATA, version=6.13.5)"
+stack: "Error: could not decode result data (value="0x", info={ "method": "getPoolIds", "signature": "getPoolIds()" }, code=BAD_DATA, version=6.13.5)↵ at makeError (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/ethers.js?v=fe72107c:325:15)↵ at assert (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/ethers.js?v=fe72107c:338:11)↵ at _Interface.decodeFunctionResult (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/ethers.js?v=fe72107c:12531:5)↵ at staticCallResult (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/ethers.js?v=fe72107c:14630:31)↵ at async staticCall (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/ethers.js?v=fe72107c:14598:20)↵ at async Proxy.getPoolIds (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/ethers.js?v=fe72107c:14635:14)↵ at async fetchSlipstreamPositions (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/src/services/slipstream.ts:49:17)↵ at async Promise.allSettled (index 2)↵ at async fetchAllPositions (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/src/services/dex.ts:204:102)↵ at async queryFn (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/src/hooks/use-ethereum.ts:268:28)"
+get stack: ƒ ()
+set stack: ƒ ()
+length: 1
+name: ""
+[[Prototype]]: ƒ ()
+[[Prototype]]: Object
+
+at t.value (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/__replco/static/de

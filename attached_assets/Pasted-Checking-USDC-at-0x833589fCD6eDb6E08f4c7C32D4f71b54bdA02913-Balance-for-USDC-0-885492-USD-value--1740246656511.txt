@@ -1,0 +1,25 @@
+Checking USDC at 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913...
+Balance for USDC: 0.885492
+USD value for USDC: $0.885492
+Final token balances: 
+(2) [{…}, {…}]
+Starting to fetch DeFi positions... 
+Object {address: "0xc8db88117aa94f1c4a80824c58c02023489f1a92", chainId: 8453, baseProvider: true, providerNetwork: _Network}
+Starting to fetch all positions for address: 0xc8dB88117AA94F1c4a80824C58C02023489f1A92
+Provider connection verified: 
+Object {network: "base", chainId: BigInt, blockNumber: 26728613}
+Fetching positions for protocols...
+Starting Uniswap V3 position fetch for: 0xc8dB88117AA94F1c4a80824C58C02023489f1A92
+Querying Uniswap V3 subgraph for positions...
+Attempting to fetch Aerodrome positions for address: 0xc8dB88117AA94F1c4a80824C58C02023489f1A92
+Invalid address format: 0x2B0e79cbe7C268997eF4E6E86EE0E98856daBE3D 
+TypeError {code: "INVALID_ARGUMENT", argument: "address", value: "0x2B0e79cbe7C268997eF4E6E86EE0E98856daBE3D", shortMessage: "bad address checksum"}
+argument: "address"
+code: "INVALID_ARGUMENT"
+shortMessage: "bad address checksum"
+value: "0x2B0e79cbe7C268997eF4E6E86EE0E98856daBE3D"
+message: "bad address checksum (argument="address", value="0x2B0e79cbe7C268997eF4E6E86EE0E98856daBE3D", code=INVALID_ARGUMENT, version=6.13.5)"
+stack: "TypeError: bad address checksum (argument="address", value="0x2B0e79cbe7C268997eF4E6E86EE0E98856daBE3D", code=INVALID_ARGUMENT, version=6.13.5)↵ at makeError (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/ethers.js?v=88dadcc4:318:15)↵ at assert (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/ethers.js?v=88dadcc4:338:11)↵ at assertArgument (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/ethers.js?v=88dadcc4:342:3)↵ at Object.getAddress (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/ethers.js?v=88dadcc4:6834:5)↵ at normalizeAddress (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/src/services/slipstream.ts:6:19)↵ at fetchSlipstreamPositions (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/src/services/slipstream.ts:24:29)↵ at fetchAllPositions (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/src/services/dex.ts:189:7)↵ at async queryFn (https://b116d929-8a79-4d31-a3fb-89d446d4d654-00-1afyudnbzgoe8.janeway.replit.dev/src/hooks/use-ethereum.ts:216:28)"
+get stack: ƒ ()
+set stack: ƒ ()
+[[Prototype]]: Object

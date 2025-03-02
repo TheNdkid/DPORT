@@ -1,0 +1,116 @@
+The issue you're encountering is likely due to the fact that Uniswap V3-style liquidity positions (like Aerodrome's concentrated liquidity pools) are stored as NFTs (ERC-721 tokens), rather than as direct ERC-20 balances. This means they won't show up in a standard liquidity pool query that checks ERC-20 LP token balances.
+
+🔍 Why Your LP Position Isn't Detected
+Your Aerodrome LP is an NFT (ERC-721)
+
+Unlike standard DEX LPs (which are ERC-20 tokens), your position is an NFT that represents your concentrated liquidity range (2257.5 - 3047.3 USDC/ETH).
+Standard balanceOf() checks won’t work since it's an NFT, not a fungible token.
+We Need to Query Aerodrome's Position Manager Contract
+
+Your Pool Address: 0xb2cc224c1c9fee385f8ad6a55b4d94e92359dc59
+Your NFT Token ID: 7753534
+To retrieve LP details, we need to interact with the Aerodrome Non-Fungible Position Manager contract.
+🛠️ Solution: Query Aerodrome LP NFT Positions
+1️⃣ Fetch NFT LP Positions from the Aerodrome Position Manager
+Aerodrome likely follows Uniswap V3's "NonfungiblePositionManager" standard. We need to query the owner’s LP position using the NFT Token ID.
+
+📝 Steps:
+Check if the user owns an LP NFT (ERC-721).
+Retrieve the LP's token amounts, price range, and fees earned.
+Display LP data in the UI.
+🔹 Get Aerodrome NFT LP Positions (Ethers.js)
+javascript
+Copy
+Edit
+import { ethers } from "ethers";
+
+const AERODROME_POSITION_MANAGER = "0x82792...85b72"; // Aerodrome Position Manager Contract
+
+const AERODROME_NFT_ABI = [
+    "function ownerOf(uint256 tokenId) external view returns (address)",
+    "function positions(uint256 tokenId) external view returns (uint96 nonce, address operator, address token0, address token1, int24 tickLower, int24 tickUpper, uint128 liquidity, uint256 feeGrowthInside0LastX128, uint256 feeGrowthInside1LastX128, uint128 tokensOwed0, uint128 tokensOwed1)"
+];
+
+const getAerodromePosition = async (tokenId, walletAddress) => {
+    const provider = new ethers.JsonRpcProvider("https://base-rpc.publicnode.com"); 
+    const positionManager = new ethers.Contract(AERODROME_POSITION_MANAGER, AERODROME_NFT_ABI, provider);
+
+    try {
+        // Check if the wallet owns this NFT
+        const owner = await positionManager.ownerOf(tokenId);
+        if (owner.toLowerCase() !== walletAddress.toLowerCase()) {
+            console.warn("This wallet does not own the specified LP NFT.");
+            return null;
+        }
+
+        // Fetch position details
+        const position = await positionManager.positions(tokenId);
+        console.log("Aerodrome LP Position:", position);
+
+        return {
+            token0: position.token0,
+            token1: position.token1,
+            tickLower: position.tickLower,
+            tickUpper: position.tickUpper,
+            liquidity: position.liquidity,
+            tokensOwed0: position.tokensOwed0,
+            tokensOwed1: position.tokensOwed1
+        };
+    } catch (error) {
+        console.error("Error fetching Aerodrome LP NFT position:", error);
+        return null;
+    }
+};
+🔹 What This Does:
+
+✅ Checks if your wallet owns the NFT (ERC-721).
+✅ Fetches details like liquidity, tick range, and fees.
+✅ Returns structured LP data for the UI.
+2️⃣ Display LP Data in React UI
+Now, we integrate it into the frontend.
+
+javascript
+Copy
+Edit
+import React, { useState, useEffect } from "react";
+import { getAerodromePosition } from "../utils/aerodromeScanner";
+
+const AerodromeLPScanner = ({ walletAddress }) => {
+    const [lpPosition, setLpPosition] = useState(null);
+    const tokenId = "7753534"; // Your specific LP NFT Token ID
+
+    useEffect(() => {
+        if (!walletAddress) return;
+        const fetchPosition = async () => {
+            const data = await getAerodromePosition(tokenId, walletAddress);
+            setLpPosition(data);
+        };
+        fetchPosition();
+    }, [walletAddress]);
+
+    if (!lpPosition) {
+        return <p className="text-red-500">No Aerodrome LP NFT found for this wallet.</p>;
+    }
+
+    return (
+        <div className="p-4">
+            <h2 className="text-xl font-bold">Aerodrome LP Position</h2>
+            <p><strong>Pool:</strong> {lpPosition.token0} / {lpPosition.token1}</p>
+            <p><strong>Tick Range:</strong> {lpPosition.tickLower} - {lpPosition.tickUpper}</p>
+            <p><strong>Liquidity:</strong> {lpPosition.liquidity}</p>
+            <p><strong>Unclaimed Fees:</strong> {lpPosition.tokensOwed0} {lpPosition.token0} / {lpPosition.tokensOwed1} {lpPosition.token1}</p>
+        </div>
+    );
+};
+
+export default AerodromeLPScanner;
+🚀 Summary of Fix
+Issue	Fix
+LP Positions not showing	Query Aerodrome NFT Position Manager (ERC-721).
+Standard LP queries don't work	Use ownerOf() & positions() on the NFT contract.
+Unclaimed fees missing	Fetch tokensOwed0 & tokensOwed1 from the contract.
+Tick range & liquidity missing	Fetch tickLower, tickUpper, and liquidity.
+🎯 Next Steps
+🔹 Add a Button to Claim Fees Directly
+🔹 Fetch Multiple LP Positions for a Wallet
+🔹 Show Historical LP Performance (Yield + Fees Earned)

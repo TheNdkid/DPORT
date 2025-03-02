@@ -1,0 +1,55 @@
+1️⃣ Fetch NFT LP Positions from the Aerodrome Position Manager
+Aerodrome likely follows Uniswap V3's "NonfungiblePositionManager" standard. We need to query the owner’s LP position using the NFT Token ID.
+
+📝 Steps:
+Check if the user owns an LP NFT (ERC-721).
+Retrieve the LP's token amounts, price range, and fees earned.
+Display LP data in the UI.
+🔹 Get Aerodrome NFT LP Positions (Ethers.js)
+javascript
+Copy
+Edit
+import { ethers } from "ethers";
+
+const AERODROME_POSITION_MANAGER = "0x82792...85b72"; // Aerodrome Position Manager Contract
+
+const AERODROME_NFT_ABI = [
+    "function ownerOf(uint256 tokenId) external view returns (address)",
+    "function positions(uint256 tokenId) external view returns (uint96 nonce, address operator, address token0, address token1, int24 tickLower, int24 tickUpper, uint128 liquidity, uint256 feeGrowthInside0LastX128, uint256 feeGrowthInside1LastX128, uint128 tokensOwed0, uint128 tokensOwed1)"
+];
+
+const getAerodromePosition = async (tokenId, walletAddress) => {
+    const provider = new ethers.JsonRpcProvider("https://base-rpc.publicnode.com"); 
+    const positionManager = new ethers.Contract(AERODROME_POSITION_MANAGER, AERODROME_NFT_ABI, provider);
+
+    try {
+        // Check if the wallet owns this NFT
+        const owner = await positionManager.ownerOf(tokenId);
+        if (owner.toLowerCase() !== walletAddress.toLowerCase()) {
+            console.warn("This wallet does not own the specified LP NFT.");
+            return null;
+        }
+
+        // Fetch position details
+        const position = await positionManager.positions(tokenId);
+        console.log("Aerodrome LP Position:", position);
+
+        return {
+            token0: position.token0,
+            token1: position.token1,
+            tickLower: position.tickLower,
+            tickUpper: position.tickUpper,
+            liquidity: position.liquidity,
+            tokensOwed0: position.tokensOwed0,
+            tokensOwed1: position.tokensOwed1
+        };
+    } catch (error) {
+        console.error("Error fetching Aerodrome LP NFT position:", error);
+        return null;
+    }
+};
+🔹 What This Does:
+
+✅ Checks if your wallet owns the NFT (ERC-721).
+✅ Fetches details like liquidity, tick range, and fees.
+✅ Returns structured LP data for the UI.

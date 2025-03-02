@@ -1,0 +1,194 @@
+The error TypeError: balance.isZero is not a function indicates a problem in your code where you’re trying to call .isZero() on a value that isn’t a BigNumber (or similar type) from a library like ethers.js. This is happening in your fetchSlipstreamPositions function at line 52 in dex.ts. Let’s break it down and fix it.
+Error Analysis
+Where It Happens:
+File: src/services/dex.ts
+
+Line: 52 (inside fetchSlipstreamPositions)
+
+Context: You’re checking balance.isZero() after fetching the NFT balance for wallet 0xc8dB88117AA94F1c4a80824C58C02023489f1A92.
+What It Means:
+You’re calling balanceOf(address) on the Slipstream Position Manager contract to get the number of NFTs owned by the wallet.
+
+The result (balance) logs as 1, but when you call .isZero() on it, it fails because balance isn’t a BigNumber object—it’s likely a plain JavaScript number or an incompatible type.
+Likely Cause:
+The ethers.js library returns BigNumber values for contract calls like balanceOf, but your setup might be converting this to a raw number (e.g., via TypeScript type coercion, a different library, or manual parsing) before you call .isZero().
+Stack Trace:
+The error propagates from fetchSlipstreamPositions → fetchAllPositions → queryFn in use-ethereum.ts, suggesting this is part of a broader position-fetching flow, possibly using a library like React Query.
+Step 1: Inspect the Code
+Since the error is at dex.ts:52, here’s what I assume your fetchSlipstreamPositions function looks like based on typical patterns and the error:
+typescript
+import { ethers } from "ethers";
+
+const provider = new ethers.providers.JsonRpcProvider("https://mainnet.base.org");
+const slipstreamAddress = "0x827922686190790b37229fd06084350E74485b72"; // Example Slipstream Position Manager
+const slipstreamABI = [
+  "function balanceOf(address owner) view returns (uint256)",
+  "function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)",
+  "function positions(uint256 tokenId) view returns (uint96 nonce, address operator, address token0, address token1, uint24 fee, int24 tickLower, int24 tickUpper, uint128 liquidity, uint256 feeGrowthInside0LastX128, uint256 feeGrowthInside1LastX128, uint128 tokensOwed0, uint128 tokensOwed1)"
+];
+const slipstreamContract = new ethers.Contract(slipstreamAddress, slipstreamABI, provider);
+
+async function fetchSlipstreamPositions(walletAddress: string) {
+  console.log(`Fetching Slipstream positions for: ${walletAddress}`);
+  try {
+    const balance = await slipstreamContract.balanceOf(walletAddress);
+    console.log(`Balance: ${balance}`);
+    
+    // Line 52 (or near it) - Error here
+    if (balance.isZero()) {
+      return [];
+    }
+
+    const positions = [];
+    for (let i = 0; i < balance; i++) {
+      const tokenId = await slipstreamContract.tokenOfOwnerByIndex(walletAddress, i);
+      const position = await slipstreamContract.positions(tokenId);
+      positions.push({ tokenId, ...position });
+    }
+    return positions;
+  } catch (error) {
+    console.error("Error fetching Slipstream positions:", error);
+    throw error;
+  }
+}
+
+Assumption:
+Line 52 is if (balance.isZero()), and balance is logging as 1 (a number) instead of a BigNumber object with methods like .isZero().
+Step 2: Fix the Type Issue
+The balanceOf function returns a BigNumber in ethers.js, but something in your setup is breaking this. Here’s how to fix it:
+Fix 1: Ensure BigNumber Handling
+Modify the code to explicitly treat balance as a BigNumber:
+typescript
+import { ethers } from "ethers";
+
+const provider = new ethers.providers.JsonRpcProvider("https://mainnet.base.org");
+const slipstreamAddress = "0x827922686190790b37229fd06084350E74485b72";
+const slipstreamABI = [
+  "function balanceOf(address owner) view returns (uint256)",
+  "function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)",
+  "function positions(uint256 tokenId) view returns (uint96 nonce, address operator, address token0, address token1, uint24 fee, int24 tickLower, int24 tickUpper, uint128 liquidity, uint256 feeGrowthInside0LastX128, uint256 feeGrowthInside1LastX128, uint128 tokensOwed0, uint128 tokensOwed1)"
+];
+const slipstreamContract = new ethers.Contract(slipstreamAddress, slipstreamABI, provider);
+
+async function fetchSlipstreamPositions(walletAddress: string) {
+  console.log(`Fetching Slipstream positions for: ${walletAddress}`);
+  try {
+    const balance = await slipstreamContract.balanceOf(walletAddress);
+    console.log(`Balance: ${balance.toString()}`); // Use .toString() for logging
+    
+    if (balance.isZero()) { // BigNumber method
+      return [];
+    }
+
+    const positionCount = balance.toNumber(); // Convert to number for iteration
+    const positions = [];
+    for (let i = 0; i < positionCount; i++) {
+      const tokenId = await slipstreamContract.tokenOfOwnerByIndex(walletAddress, i);
+      const position = await slipstreamContract.positions(tokenId);
+      positions.push({ tokenId: tokenId.toString(), ...position });
+    }
+    return positions;
+  } catch (error) {
+    console.error("Error fetching Slipstream positions:", error);
+    throw error;
+  }
+}
+
+// Test it
+fetchSlipstreamPositions("0xc8dB88117AA94F1c4a80824C58C02023489f1A92").then(console.log).catch(console.error);
+
+Changes:
+Log balance.toString() to avoid implicit conversion.
+
+Use balance.isZero() directly (it’s a BigNumber method).
+
+Convert balance to a number with .toNumber() for the loop, since for loops need a plain integer.
+Fix 2: Check for Type Coercion
+If balance is still a plain number (not a BigNumber), it might be due to:
+TypeScript Type Assertion: Are you typing balance as number instead of ethers.BigNumber? Check your function’s return type or variable declaration.
+
+Library Version: Ensure you’re using ethers v5 or v6 consistently. Run npm list ethers to check the version.
+Update your TypeScript types:
+typescript
+import { ethers, BigNumber } from "ethers";
+
+async function fetchSlipstreamPositions(walletAddress: string): Promise<any[]> {
+  const balance: BigNumber = await slipstreamContract.balanceOf(walletAddress);
+  // ... rest of the code
+}
+
+Step 3: Test and Debug
+Run the updated function:
+If Balance: 1 logs and no error occurs, the type fix worked, and it should proceed to fetch position data for token ID 7753534.
+
+If you hit the original "could not decode result data" error again, it’s a separate issue with positions(tokenId)—we’ll tackle that next.
+Step 4: Address the Decoding Issue (If It Persists)
+Your earlier issue ("could not decode result data") might still arise when calling positions(7753534). If it does:
+Verify ABI: The ABI you provided looks correct for Uniswap V3-style contracts, which Aerodrome Slipstream uses. But let’s log raw data to confirm:
+typescript
+const tokenId = ethers.BigNumber.from(7753534);
+const rawData = await provider.call({
+  to: slipstreamAddress,
+  data: slipstreamContract.interface.encodeFunctionData("positions", [tokenId]),
+});
+console.log("Raw Data:", rawData);
+const decoded = slipstreamContract.interface.decodeFunctionResult("positions", rawData);
+console.log("Decoded:", decoded);
+Check Contract: Ensure 0x827922686190790b37229fd06084350E74485b72 is the Slipstream Position Manager. If not, try 0x82792F8F57635DC7e4C78FeB5a7a2CFD102A1cC3.
+Full Fixed Code
+Here’s the complete, corrected version:
+typescript
+import { ethers, BigNumber } from "ethers";
+
+const provider = new ethers.providers.JsonRpcProvider("https://mainnet.base.org");
+const slipstreamAddress = "0x827922686190790b37229fd06084350E74485b72";
+const slipstreamABI = [
+  "function balanceOf(address owner) view returns (uint256)",
+  "function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)",
+  "function positions(uint256 tokenId) view returns (uint96 nonce, address operator, address token0, address token1, uint24 fee, int24 tickLower, int24 tickUpper, uint128 liquidity, uint256 feeGrowthInside0LastX128, uint256 feeGrowthInside1LastX128, uint128 tokensOwed0, uint128 tokensOwed1)"
+];
+const slipstreamContract = new ethers.Contract(slipstreamAddress, slipstreamABI, provider);
+
+async function fetchSlipstreamPositions(walletAddress: string): Promise<any[]> {
+  console.log(`Fetching Slipstream positions for: ${walletAddress}`);
+  try {
+    const balance: BigNumber = await slipstreamContract.balanceOf(walletAddress);
+    console.log(`Balance: ${balance.toString()}`);
+
+    if (balance.isZero()) {
+      return [];
+    }
+
+    const positionCount = balance.toNumber();
+    const positions = [];
+    for (let i = 0; i < positionCount; i++) {
+      const tokenId: BigNumber = await slipstreamContract.tokenOfOwnerByIndex(walletAddress, i);
+      const position = await slipstreamContract.positions(tokenId);
+      positions.push({
+        tokenId: tokenId.toString(),
+        token0: position.token0,
+        token1: position.token1,
+        liquidity: ethers.utils.formatUnits(position.liquidity, 18),
+        feesOwed0: ethers.utils.formatUnits(position.tokensOwed0, 6), // Adjust decimals
+        feesOwed1: ethers.utils.formatUnits(position.tokensOwed1, 18),
+      });
+    }
+    return positions;
+  } catch (error) {
+    console.error("Error fetching Slipstream positions:", error);
+    throw error;
+  }
+}
+
+fetchSlipstreamPositions("0xc8dB88117AA94F1c4a80824C58C02023489f1A92")
+  .then(positions => console.log("Positions:", positions))
+  .catch(error => console.error("Failed:", error));
+
+Next Steps
+Replace the code in dex.ts with this version.
+
+Run it and check the output.
+
+If it works, you’ll see position data for your USDC/ETH LP. If it fails with a new error, share the updated logs.
+This should resolve the isZero error. If the decoding issue reappears, we’ll refine the ABI or contract address further. Let me know how it goes!
+
